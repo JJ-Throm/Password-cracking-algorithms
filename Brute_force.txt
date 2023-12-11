@@ -1,0 +1,75 @@
+import java.util.Scanner;
+public class bruteForce
+{
+    public static void main(String[] args)
+    {
+        Scanner in = new Scanner(System.in);
+        System.out.println("Enter a password: ");
+        String targetPassword = in.nextLine();
+        
+        bruteForceAttack(targetPassword);
+    }
+    
+    private static void bruteForceAttack(String targetPassword){
+        char[] characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+=`~[{]}|;:<.>,?/".toCharArray();
+        
+        //accesses length of the password to shorten run time (didnt want it to take forever on long passwords since codehs sucks)
+        int passwordLength = targetPassword.length();
+        char[] currentGuess = new char[passwordLength];
+        
+        long startTime = System.currentTimeMillis();
+        
+        //Brute force algorithm loop
+        while(true){
+            //checks password to see if it matches
+            if (checkPassword(currentGuess, targetPassword)) {
+                long endTime = System.currentTimeMillis();
+                long elapsedTime = endTime - startTime;
+
+                System.out.println("Password cracked: " + String.valueOf(currentGuess));
+                System.out.println("Time elapsed: " + elapsedTime + " milliseconds");
+                break;
+            }
+
+            // Update the current guess for the next iteration
+            updateGuess(currentGuess, characters);
+        }
+    }
+    
+    //checks
+    private static boolean checkPassword(char[] guess, String targetPassword){
+        String guessString = String.valueOf(guess);
+        return guessString.equals(targetPassword);
+    }
+    
+    private static void updateGuess(char[] guess, char[] characters) {
+        int index = guess.length - 1;
+
+        // Increment the last character in the guess
+        while (index >= 0) {
+            char currentChar = guess[index];
+            int charIndex = findCharIndex(currentChar, characters);
+
+            // Reset the current character to the first character if it reaches the last character in the character set
+            if (charIndex == characters.length - 1) {
+                guess[index] = characters[0];
+                index--;
+            } else {
+                // Increment the current character and break out of the loop
+                guess[index] = characters[charIndex + 1];
+                break;
+            }
+        }
+    }
+    
+    private static int findCharIndex(char targetChar, char[] characters){
+        //finds the index of the character in the array
+        for(int i = 0; i < characters.length; i++){
+            if(characters[i] == targetChar){
+                return i;
+            }
+        }
+        //returns -1 if character is not found
+        return -1;
+    }
+}
